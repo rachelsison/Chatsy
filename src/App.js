@@ -13,20 +13,28 @@ var config = {
 };
 firebase.initializeApp(config);
 
-const App = React.createClass({
-  getInitialState: function() {
-  
-    return {
-      user1: 'Laura',
-      user2: 'Bob',
+class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      localUser: null,
       chatLog: [],
       userTyping: ''
-    }
-  },
+    };
+    this.clearChatLog = this.clearChatLog.bind(this);
+    this.updateChatLog = this.updateChatLog.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.renderNamePrompt = this.renderNamePrompt.bind(this);
+    this.updateUserTyping = this.updateUserTyping.bind(this);
+    this.clearUserTyping = this.clearUserTyping.bind(this);
+    this.render = this.render.bind(this);
+  }
+  
   clearChatLog () {
     this.firebaseRef.remove();
     this.setState({chatLog: []})
-  },
+  }
+
   updateChatLog (messageObject) {
     var chatLog = this.state.chatLog
     chatLog.push(messageObject)
@@ -35,7 +43,8 @@ const App = React.createClass({
       message: messageObject
     });
     this.setState({chatLog: chatLog})
-  },
+  }
+
   componentWillMount() {
     this.firebaseRef = firebase.database().ref('/items')
     this.firebaseRef.on('value', (dataSnapshot) => {
@@ -46,52 +55,63 @@ const App = React.createClass({
       }
       this.setState({chatLog: chatLog})
       console.log('database chatLog: ', chatLog)
-
       console.log('currentMessages: ', currentMessages)
     })
+  }
 
-  },
+  handleSubmit (event) {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      this.setState({localUser: event.target.value})
+      }
+  }
+
+  renderNamePrompt () {
+    console.log('renderingNamePrompt')
+    if (!this.state.localUser) {
+      return (
+        <div className="namePromptContainer">
+          <input 
+              className="textBoxInput"
+              type="text"
+              onKeyDown={this.handleSubmit}
+              placeholder="Please enter your name to begin chat ..."
+              />
+        </div>
+      )
+    }
+  }
+
   clearUserTyping () {
     this.setState({userTyping: ''})
-  },
+  }
+
   updateUserTyping (user) {
     this.setState({userTyping: user})
     _.debounce(this.clearUserTyping, 300)()
-  },
-  updateUser1(username) {
-    this.setState({user1: username})
-  },
-  updateUser2(username) {
-    this.setState({user2: username})
-  },
+  }
+
   render () {
     console.log('test')
+    console.log(this.firebaseRef)
     return (
-      <div className="app-container222">
-        <div className="app-content222">
+      <div className="app-container">
+        <div className="app-content">
         <div className="clearChatLogButton" onClick={this.clearChatLog}>Clear Chat Log</div>
+          {this.renderNamePrompt()}
           <UserScreen
-            user={this.state.user1}
+            user={this.state.localUser}
             chatLog={this.state.chatLog}
             updateChatLog={this.updateChatLog}
             userTyping={this.state.userTyping}
             updateUserTyping={this.updateUserTyping}
             updateUser={this.updateUser1}
-            alignUserScreen="alignUserScreenLeft"
             />
-          <UserScreen
-            user={this.state.user2}
-            chatLog={this.state.chatLog}
-            updateChatLog={this.updateChatLog}
-            userTyping={this.state.userTyping}
-            updateUserTyping={this.updateUserTyping}
-            updateUser={this.updateUser2}
-            alignUserScreen="alignUserScreenRight"
-            />
+          }
         </div>
       </div>
     );
   }
-})
+};
 
 export default App;

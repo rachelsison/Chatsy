@@ -22,12 +22,18 @@ class UserScreen extends React.Component {
 
    	renderMessages () {
    		var user = this.props.user
+         console.log('props usertyping: ', this.props.userTyping)
+         console.log('user: ', this.props.user)
+         var lastUser;
    		var messages = this.props.chatLog.map(function(message) {
+            var showName = (message.user !== lastUser) && (message.user !== user) ? true : false
+            lastUser = message.user
    			return (<Message
    				localUser={user}
    				user={message.user}
    				message={message.message}
-   				time={message.time}/>)
+   				time={message.time}
+               showName={showName}/>)
    		})
    		if (this.props.userTyping.length && this.props.userTyping !== this.props.user) {
    			var toReturn = (
@@ -117,7 +123,8 @@ class UserScreen extends React.Component {
 
 	render () {
 		return (
-			<div className={this.props.alignUserScreen}>
+			<div className="userScreen">
+            <div className="dateTime">{moment().format('MMM Do, h:mm a')}</div>
 				{this.renderMessages()}
 				{this.renderTextInput()}
 			</div>
