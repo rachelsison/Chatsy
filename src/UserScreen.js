@@ -112,7 +112,7 @@ class UserScreen extends React.Component {
    	renderTextInput () {
    		return (<div className="textInputContainer">
        			<input 
-       				className="textBoxInput"
+       				className="messageInputBox"
        				type="text"
        				value={this.state.textBoxvalue}
        				onChange={this.handleTextSubmit}

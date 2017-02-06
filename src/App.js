@@ -73,18 +73,21 @@ class App extends React.Component {
     if (!this.state.localUser) {
       return (
         <div className="namePromptContainer">
-          <input 
+          <div className="inputContainer">
+            <input 
               className="textBoxInput"
               type="text"
               onKeyDown={this.handleSubmit}
               placeholder="Please enter your name to begin chat ..."
               />
+          </div>
         </div>
       )
     }
   }
 
   clearUserTyping () {
+    
     this.setState({userTyping: ''})
   }
 
@@ -110,7 +113,6 @@ class App extends React.Component {
             updateUser={this.updateUser1}
             chatDate={this.state.chatDate}
             />
-          }
         </div>
       </div>
     );
