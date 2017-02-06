@@ -100,6 +100,8 @@
 
 .dateTime {
   display:inline-block;
+  width: 100%;
+  margin-bottom: 20px;
   text-align: center;
   font-size: 10px;
   color: grey;
@@ -150,9 +152,10 @@
 }
 
 .textInputContainer {
-  position: absolute;
-  width: 100%;
+  position: relative;
+  width: 96%;
   bottom: 4%;
+  margin-top: 3px;
 }
 
 .textBoxInput {

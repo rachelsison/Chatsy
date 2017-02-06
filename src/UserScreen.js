@@ -52,6 +52,7 @@ class UserScreen extends React.Component {
    				<div
    					ref={this.messageContainerReference}
    					className="messagesContainer">
+                  <div className="dateTime">{this.props.chatDate}</div>
    					{messages}
    					<div className="spaceOrTyping"></div>
    				</div>)
@@ -124,7 +125,6 @@ class UserScreen extends React.Component {
 	render () {
 		return (
 			<div className="userScreen">
-            <div className="dateTime">{moment().format('MMM Do, h:mm a')}</div>
 				{this.renderMessages()}
 				{this.renderTextInput()}
 			</div>
@@ -139,7 +139,8 @@ UserScreen.proptypes = {
 		updateUserTyping: PropTypes.func,
 		updateUser: PropTypes.func,
 		alignUserScreen: PropTypes.string,
-		userTyping: PropTypes.string
+		userTyping: PropTypes.string,
+      chatDate: PropTypes.string
 };
 
 export default UserScreen

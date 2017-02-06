@@ -3,6 +3,7 @@ import UserScreen from './UserScreen';
 import _ from 'lodash';
 import './App.css';
 import * as firebase from 'firebase';
+import moment from 'moment'
 
 var config = {
   apiKey: "AIzaSyBE88kR1qk1BcZ42m5qpxwEASbJbQ-Unrk",
@@ -19,7 +20,8 @@ class App extends React.Component {
     this.state = {
       localUser: null,
       chatLog: [],
-      userTyping: ''
+      userTyping: '',
+      chatDate: null
     };
     this.clearChatLog = this.clearChatLog.bind(this);
     this.updateChatLog = this.updateChatLog.bind(this);
@@ -53,7 +55,7 @@ class App extends React.Component {
       for (var key in currentMessages) {
         chatLog.push(currentMessages[key].message)
       }
-      this.setState({chatLog: chatLog})
+      this.setState({chatLog: chatLog, chatDate: moment().format('MMM Do, h:mm a')})
       console.log('database chatLog: ', chatLog)
       console.log('currentMessages: ', currentMessages)
     })
@@ -93,7 +95,7 @@ class App extends React.Component {
 
   render () {
     console.log('test')
-    console.log(this.firebaseRef)
+    console.log(this.firebaseRefc)
     return (
       <div className="app-container">
         <div className="app-content">
@@ -106,6 +108,7 @@ class App extends React.Component {
             userTyping={this.state.userTyping}
             updateUserTyping={this.updateUserTyping}
             updateUser={this.updateUser1}
+            chatDate={this.state.chatDate}
             />
           }
         </div>
