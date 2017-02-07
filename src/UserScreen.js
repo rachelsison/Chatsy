@@ -26,14 +26,16 @@ class UserScreen extends React.Component {
          console.log('user: ', this.props.user)
          var lastUser;
    		var messages = this.props.chatLog.map(function(message) {
-            var showName = (message.user !== lastUser) && (message.user !== user) ? true : false
-            lastUser = message.user
-   			return (<Message
-   				localUser={user}
-   				user={message.user}
-   				message={message.message}
-   				time={message.time}
-               showName={showName}/>)
+            if (message) {
+               var showName = (message.user !== lastUser) && (message.user !== user) ? true : false
+               lastUser = message.user
+      			return (<Message
+      				localUser={user}
+      				user={message.user}
+      				message={message.message}
+      				time={message.time}
+                  showName={showName}/>)
+            }
    		})
    		if (this.props.userTyping.length && this.props.userTyping !== this.props.user) {
    			var toReturn = (
@@ -42,7 +44,11 @@ class UserScreen extends React.Component {
    					className="messagesContainer">
    					{messages}
    				<div className="spaceOrTyping">
-   					<span className="userIsTyping">{this.props.userTyping} is typing...</span>
+   					<div class="loader">
+                     <span></span>
+                     <span></span>
+                     <span></span>
+                  </div>
    				</div>
    				</div>
    			)
@@ -102,11 +108,9 @@ class UserScreen extends React.Component {
 
 	componentDidUpdate () {
 	    var node = this.messagesContainer;
-	    // console.log('node: ', node)
 	    if (node) {
 	    	node.scrollTop = node.scrollHeight
 	    }
-	  // }
 	}
 
    	renderTextInput () {

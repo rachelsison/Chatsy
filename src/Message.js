@@ -35,9 +35,9 @@ class Message extends React.Component {
 }
 
 Message.propTypes = {
-	localUser: PropTypes.string.isRequired,
-	user: PropTypes.string.isRequired,
-	message: PropTypes.string.isRequired,
+	localUser: PropTypes.string,
+	user: PropTypes.string,
+	message: PropTypes.string,
 	time: PropTypes.string.isRequired,
 	showName: PropTypes.bool
 

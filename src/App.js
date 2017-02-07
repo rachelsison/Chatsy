@@ -4,6 +4,7 @@ import _ from 'lodash';
 import './App.css';
 import * as firebase from 'firebase';
 import moment from 'moment'
+import randomstring from 'randomstring';
 
 var config = {
   apiKey: "AIzaSyBE88kR1qk1BcZ42m5qpxwEASbJbQ-Unrk",
@@ -21,7 +22,8 @@ class App extends React.Component {
       localUser: null,
       chatLog: [],
       userTyping: '',
-      chatDate: null
+      chatDate: null,
+      channelID: null
     };
     this.clearChatLog = this.clearChatLog.bind(this);
     this.updateChatLog = this.updateChatLog.bind(this);
@@ -29,7 +31,11 @@ class App extends React.Component {
     this.renderNamePrompt = this.renderNamePrompt.bind(this);
     this.updateUserTyping = this.updateUserTyping.bind(this);
     this.clearUserTyping = this.clearUserTyping.bind(this);
+    this.parseKeyFromUrl = this.parseKeyFromUrl.bind(this);
     this.render = this.render.bind(this);
+    this.createNewChannel = this.createNewChannel.bind(this)
+    this.createDatabases = this.createDatabases.bind(this)
+    this.loadArchivedChannel = this.loadArchivedChannel.bind(this)
   }
   
   clearChatLog () {
@@ -41,23 +47,144 @@ class App extends React.Component {
     var chatLog = this.state.chatLog
     chatLog.push(messageObject)
     console.log('updatedChatLog:', chatLog)
-    this.firebaseRef.push({
-      message: messageObject
-    });
+    // this.firebaseRef.push({
+    //   message: messageObject
+    // }).then((snap) => {console.log('snap.key: ', snap.toString())})
+    this.firebaseMessages.child(this.state.channelID).push(messageObject)
     this.setState({chatLog: chatLog})
   }
 
   componentWillMount() {
-    this.firebaseRef = firebase.database().ref('/items')
-    this.firebaseRef.on('value', (dataSnapshot) => {
-      const currentMessages = dataSnapshot.val();
-      var chatLog = []
-      for (var key in currentMessages) {
-        chatLog.push(currentMessages[key].message)
+    // this.firebaseRef = firebase.database().ref('/items')
+    // var message = this.firebaseRef.child('-KcKRPFv54Msr_Ultlmw').push('hello mom')
+    // console.log('firebaseref message object? ', message)
+    // this.firebaseRef.on('value', (dataSnapshot) => {
+    //   const currentMessages = dataSnapshot.val();
+    //   console.log('snapshot key: ', dataSnapshot)
+    //   var chatLog = []
+    //   for (var key in currentMessages) {
+    //     chatLog.push(currentMessages[key].message)
+    //     console.log('keyyy: ', key)
+    //   }
+    //   this.setState({chatLog: chatLog, chatDate: moment().format('MMM Do, h:mm a')})
+    //   console.log('database chatLog: ', chatLog)
+    //   console.log('currentMessages: ', currentMessages)
+    //   console.log('currentmessage one message: ', currentMessages['-KcKRPFv54Msr_Ultlmw'])
+    //   console.log('URL KEY!! ', this.parseKeyFromUrl(document.location.href))
+    // })
+    var currentBrowserURL = document.location.href
+    if (currentBrowserURL.indexOf('channel=') > -1) {
+      var urlKey = this.parseKeyFromUrl(document.location.href)
+      this.createDatabases()
+      this.loadArchivedChannel(urlKey)
+    } else {
+      this.createDatabases();
+      this.createNewChannel()
+    }
+
+  }
+
+  loadArchivedChannel (urlKey) {
+    console.log('in loadArchivedChannel')
+    var channelID = urlKey;
+    var messagesList = this.firebaseMessages.child(channelID)
+    console.log('messagesList in loadArchivedChannel: ', messagesList)
+    messagesList.on('value', snap => {
+      console.log('messagesList in DB: ', snap.val());
+        const currentMessages = snap.val();
+        var chatLog = []
+        for (var key in currentMessages) {
+          chatLog.push(currentMessages[key])
+          console.log('keyyys in archived channel: ', key)
+      }
+      console.log('toupdatechatlog: ', chatLog)
+      this.setState({
+        chatLog: chatLog,
+        chatDate: moment().format('MMM Do, h:mm a'),
+        channelID: channelID
+
+      })
+
+    })
+  }
+
+  parseKeyFromUrl (url) {
+    console.log('in parseKeyFromUrl function, url: ', url)
+    var splitUrl;
+    if (url === undefined) {
+      return
+    }
+    // if reading a firebase url
+    if (url.indexOf('firebase') > -1) {
+      splitUrl = url.split('/')
+      return splitUrl[splitUrl.length - 1]
+    } else {
+      // if reading browser url
+      return url.split('?')[1].split('=')[1]
+    }
+  }
+
+  /* 
+    channelObject = {
+      channelName: 'channel1',
+      userTyping: '',
+      members: []
+    }
+    messages = {
+      channelID: [
+        message: {message: 'hello', user: 'Jane', time: moment().format('LT'), date: moment().format('MMM Do, h:mm a')}
+      ]
+    }
+  */
+  createNewChannel (channelObject) {
+    var channelID= randomstring.generate(7)
+    console.log('channelID: ', channelID)
+    var toPush = {}
+    toPush[channelID] = {channelName: 'testchannel', userTyping: '', members:[this.state.localUser]}
+    this.firebaseChannels.push(toPush).then( snap => {
+      // console.log('teststr: ', this.parseKeyFromUrl(snap.toString()))
+      // channelID = this.parseKeyFromUrl(snap.toString());
+      // console.log('snap.key: ', snap.toString());
+      })
+    console.log('channelID: ', channelID)
+    this.firebaseChannels.child(channelID).on('child_changed', snap => {
+      console.log('channelupdated: ', snap.val())
+    })
+    var messagesList = this.firebaseMessages.child(channelID)
+    console.log('messagesLIST: ', messagesList)
+    messagesList.on('value', snap => {
+      console.log('messagesList in DB: ', snap.val());
+        const currentMessages = snap.val();
+        var chatLog = []
+        for (var key in currentMessages) {
+          chatLog.push(currentMessages[key].message)
       }
       this.setState({chatLog: chatLog, chatDate: moment().format('MMM Do, h:mm a')})
-      console.log('database chatLog: ', chatLog)
-      console.log('currentMessages: ', currentMessages)
+
+    })
+    window.history.pushState('object or string', 'Title', '?channel=' + channelID)
+    this.setState({channelID: channelID})
+  }
+
+  createDatabases () {
+    console.log('in createDatabases')
+    this.firebaseChannels = firebase.database().ref('/channels')
+    this.firebaseChannels.on('value', (snapshot) => {
+      const allChannels = snapshot.val()
+    })
+    // var channelID = this.createNewChannel()
+    this.firebaseMessages = firebase.database().ref('/messages')
+    this.firebaseMessages.on('value', (snapshot) => {
+      console.log(snapshot.val())
+      // var currentMessages = snapshot.val();
+      // var chatLog = []
+      // for (var key in currentMessages) {
+      //   chatLog.push(currentMessages[key].message)
+      // }
+      // this.setState({
+      //   chatLog: chatLog,
+      //   chatDate: moment().format('MMM Do, h:mm a')
+      // })
     })
   }
 
@@ -68,7 +195,7 @@ class App extends React.Component {
       }
   }
 
-  renderNamePrompt () {
+  renderNamePrompt () { 
     console.log('renderingNamePrompt')
     if (!this.state.localUser) {
       return (
@@ -87,7 +214,7 @@ class App extends React.Component {
   }
 
   clearUserTyping () {
-    
+
     this.setState({userTyping: ''})
   }
 
@@ -95,14 +222,35 @@ class App extends React.Component {
     this.setState({userTyping: user})
     _.debounce(this.clearUserTyping, 300)()
   }
+  handleChannelSubmit (event) {
+    this.createNewChannel({
+      channelName: event.target.value,
+      members: [this.state.user],
+      userTyping: ''
+    })
+  }
+  renderChannelPrompt () {
+    return (
+      <div className="namePromptContainer">
+          <div className="inputContainer">
+            <input 
+              className="textBoxInput"
+              type="text"
+              onKeyDown={this.handleChannelSubmit}
+              placeholder="Please enter a name for your channel ..."
+              />
+          </div>
+        </div>
+    )
+  }
 
   render () {
-    console.log('test')
-    console.log(this.firebaseRefc)
+    console.log('state chatlog in rendermethod: ', this.state.chatLog)
     return (
       <div className="app-container">
         <div className="app-content">
         <div className="clearChatLogButton" onClick={this.clearChatLog}>Clear Chat Log</div>
+        <div className="clearChatLogButton" onClick={this.createNewChannel}>Create New Channel</div>
           {this.renderNamePrompt()}
           <UserScreen
             user={this.state.localUser}
