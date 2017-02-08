@@ -23,7 +23,8 @@ class App extends React.Component {
       chatLog: [],
       userTyping: '',
       chatDate: null,
-      channelID: null
+      channelID: null,
+      chatMembers: []
     };
     this.clearChatLog = this.clearChatLog.bind(this);
     this.updateChatLog = this.updateChatLog.bind(this);
@@ -33,9 +34,11 @@ class App extends React.Component {
     this.clearUserTyping = this.clearUserTyping.bind(this);
     this.parseKeyFromUrl = this.parseKeyFromUrl.bind(this);
     this.render = this.render.bind(this);
-    this.createNewChannel = this.createNewChannel.bind(this)
-    this.createDatabases = this.createDatabases.bind(this)
-    this.loadArchivedChannel = this.loadArchivedChannel.bind(this)
+    this.createNewChannel = this.createNewChannel.bind(this);
+    this.createDatabases = this.createDatabases.bind(this);
+    this.loadArchivedChannel = this.loadArchivedChannel.bind(this);
+    this.setMember = this.setMember.bind(this);
+    this.renderUserScreen = this.renderUserScreen.bind(this);
   }
   
   clearChatLog () {
@@ -85,23 +88,36 @@ class App extends React.Component {
   }
 
   loadArchivedChannel (urlKey) {
-    console.log('in loadArchivedChannel')
+    console.log('in loadArchivedChannel, urlkey: ', urlKey)
     var channelID = urlKey;
+    this.firebaseChannels.child(channelID).on('child_changed', (snap) => {
+      var updated = snap.val()
+      console.log('channelupdated_______________: ', updated)
+      this.setState({userTyping: updated})
+    })
     var messagesList = this.firebaseMessages.child(channelID)
     console.log('messagesList in loadArchivedChannel: ', messagesList)
     messagesList.on('value', snap => {
       console.log('messagesList in DB: ', snap.val());
         const currentMessages = snap.val();
         var chatLog = []
+        var chatMembers = {}
         for (var key in currentMessages) {
+          var  member = currentMessages[key].user
+          console.log('currentMessages[key]: ', member)
+          if (!chatMembers[member]) {
+            chatMembers[member] = true
+          }
           chatLog.push(currentMessages[key])
+          console.log('chatmembers getting ready to push: ', chatMembers)
           console.log('keyyys in archived channel: ', key)
       }
       console.log('toupdatechatlog: ', chatLog)
       this.setState({
         chatLog: chatLog,
         chatDate: moment().format('MMM Do, h:mm a'),
-        channelID: channelID
+        channelID: channelID,
+        chatMembers: Object.keys(chatMembers)
 
       })
 
@@ -141,11 +157,7 @@ class App extends React.Component {
     console.log('channelID: ', channelID)
     var toPush = {}
     toPush[channelID] = {channelName: 'testchannel', userTyping: '', members:[this.state.localUser]}
-    this.firebaseChannels.push(toPush).then( snap => {
-      // console.log('teststr: ', this.parseKeyFromUrl(snap.toString()))
-      // channelID = this.parseKeyFromUrl(snap.toString());
-      // console.log('snap.key: ', snap.toString());
-      })
+    this.firebaseChannels.push(toPush)
     console.log('channelID: ', channelID)
     this.firebaseChannels.child(channelID).on('child_changed', snap => {
       console.log('channelupdated: ', snap.val())
@@ -157,7 +169,7 @@ class App extends React.Component {
         const currentMessages = snap.val();
         var chatLog = []
         for (var key in currentMessages) {
-          chatLog.push(currentMessages[key].message)
+          chatLog.push(currentMessages[key])
       }
       this.setState({chatLog: chatLog, chatDate: moment().format('MMM Do, h:mm a')})
 
@@ -186,6 +198,7 @@ class App extends React.Component {
       //   chatDate: moment().format('MMM Do, h:mm a')
       // })
     })
+
   }
 
   handleSubmit (event) {
@@ -195,17 +208,23 @@ class App extends React.Component {
       }
   }
 
-  renderNamePrompt () { 
+  renderNamePrompt () {
+    var setMember = this.setMember
     console.log('renderingNamePrompt')
+    var members = this.state.chatMembers.map(function (member) {
+      console.log('MEMBER: ', member)
+      return (<div className="chooseMemberName" onClick={() => setMember(member)}>{member}</div>)
+    })
     if (!this.state.localUser) {
       return (
         <div className="namePromptContainer">
           <div className="inputContainer">
+          <div>{members}</div>
             <input 
               className="textBoxInput"
               type="text"
               onKeyDown={this.handleSubmit}
-              placeholder="Please enter your name to begin chat ..."
+              placeholder="Choose your name from above or enter a new name ..."
               />
           </div>
         </div>
@@ -214,13 +233,15 @@ class App extends React.Component {
   }
 
   clearUserTyping () {
-
+    console.log('in clearn user typing')
+    this.firebaseChannels.child(this.state.channelID).update({userTyping: ''})
     this.setState({userTyping: ''})
   }
 
   updateUserTyping (user) {
+    console.log('in updateUserTyping: ')
+    this.firebaseChannels.child(this.state.channelID).update({userTyping: user})
     this.setState({userTyping: user})
-    _.debounce(this.clearUserTyping, 300)()
   }
   handleChannelSubmit (event) {
     this.createNewChannel({
@@ -229,7 +250,15 @@ class App extends React.Component {
       userTyping: ''
     })
   }
+  setMember (member) {
+    console.log('in setmember, member: ', member)
+    this.setState({localUser: member})
+  }
   renderChannelPrompt () {
+    var members = this.state.chatMembers.map(function (member) {
+      console.log('MEMBER: ', member)
+      return (<div className="chooseMemberName" onClick={() => this.setMember(member)}>{member}</div>)
+    })
     return (
       <div className="namePromptContainer">
           <div className="inputContainer">
@@ -239,28 +268,37 @@ class App extends React.Component {
               onKeyDown={this.handleChannelSubmit}
               placeholder="Please enter a name for your channel ..."
               />
+            }
           </div>
         </div>
     )
   }
+  renderUserScreen () {
+    if (this.state.localUser) {
+      return (
+        <UserScreen
+          user={this.state.localUser}
+          chatLog={this.state.chatLog}
+          updateChatLog={this.updateChatLog}
+          userTyping={this.state.userTyping}
+          updateUserTyping={this.updateUserTyping}
+          updateUser={this.updateUser1}
+          chatDate={this.state.chatDate}
+          clearUserTyping={this.clearUserTyping}
+          />
+      )
+    }
+  }
 
   render () {
     console.log('state chatlog in rendermethod: ', this.state.chatLog)
+    console.log('currentMembers: ', this.state.chatMembers)
     return (
       <div className="app-container">
         <div className="app-content">
-        <div className="clearChatLogButton" onClick={this.clearChatLog}>Clear Chat Log</div>
-        <div className="clearChatLogButton" onClick={this.createNewChannel}>Create New Channel</div>
+        <div className="clearChatLogButton" onClick={this.createNewChannel}>Create New Chat</div>
           {this.renderNamePrompt()}
-          <UserScreen
-            user={this.state.localUser}
-            chatLog={this.state.chatLog}
-            updateChatLog={this.updateChatLog}
-            userTyping={this.state.userTyping}
-            updateUserTyping={this.updateUserTyping}
-            updateUser={this.updateUser1}
-            chatDate={this.state.chatDate}
-            />
+          {this.renderUserScreen()}
         </div>
       </div>
     );

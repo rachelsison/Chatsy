@@ -24,7 +24,7 @@
 }
 
 /*! CSS reset from benfrain/app-reset */
-@import url('https://fonts.googleapis.com/css?family=Merriweather+Sans|Questrial|Abel');
+@import url('https://fonts.googleapis.com/css?family=Merriweather+Sans|Questrial|Abel|Open+Sans');
 
 ::-webkit-input-placeholder {
   color: grey;
@@ -47,8 +47,7 @@
   background-color: rgba(0,0,0,0.7);
 }
 .inputContainer {
-    width: 200px;
-    height: 30px;
+    box-sizing: border-box;
     position: fixed;
     background-color: white;
     border: 2px solid lightgrey;
@@ -58,6 +57,7 @@
     margin-top: 22%;
     z-index: 100;
     display: inline-block;
+    text-align: center;
 }
 
 .clearChatLogButton {
@@ -80,8 +80,10 @@
   width: 84%;
   background-color: #f9f9f9;
   display: inline-block;
-  margin: 3%;
-  position: relative;
+  margin-left: 3%;
+  margin-right: 3%;
+  bottom: 70px;
+  position: absolute;
   border-radius: 2px;
   box-shadow: 0px 0px 4px 0px rgba(168,165,168,1);
 }
@@ -158,11 +160,11 @@
 }
 
 .spaceOrTyping {
-  position: inherit;
+  position: relative;
   bottom: 0px;
   display: inline-block;
   width: 100%;
-  height: 20px;
+  height: 40px;
   vertical-align: bottom;
 }
 
@@ -189,10 +191,9 @@
 }*/
 
 .textBoxInput {
-  width: 92%;
-  margin-top: 1%;
-  margin-left: 3%;
-  font-family: 'Abel', sans-serif;
+  width: 300px;
+  margin-top: 4%;
+  font-family: 'Open Sans', sans-serif;
   color: black;
 }
 
@@ -200,31 +201,48 @@
 .messageInputBox {
   padding-left: 14px;
   padding-right: 14px;
+  padding-top: 3px;
+  padding-bottom: 3px;
   overflow-y: scroll;
   width: 84%;
   background-color: #f9f9f9;
   display: inline-block;
   margin-left: 3%;
   height: 20px;
-  position: relative;
+  position: absolute;
+  bottom: 20px;
   border-radius: 2px;
-  font-family: 'Abel', sans-serif;
+  font-size: 12px;
+  font-family: 'Open Sans', sans-serif;
   box-shadow: 0px 0px 4px 0px rgba(168,165,168,1);
   border: 0px solid white;
-  bottom: 12px;
+
+}
+
+.chooseMemberName {
+  background-color: #f9f9f9;
+  display: inline-block;
+  padding: 4px;
+  margin: 4px;
+  border-radius: 3px;
+  box-shadow: 0px 0px 3px 0px rgba(168,165,168,1);
+  border: 1px solid rgba(168, 165, 168, 0.52);
+  font-size: 14px;
+  font-family: 'Open Sans', sans-serif;
 }
 
 /* User is typing Loader */
 
 .loader {
-    text-align: center;    
+    bottom: 0px;
+    height: 20px;
+    position: absolute;    
 }
 .loader span {
     display: inline-block;
     vertical-align: middle;
     width: 10px;
     height: 10px;
-    margin: 50px auto;
     background: grey;
     border-radius: 50px;
     -webkit-animation: loader 0.7s infinite alternate;

@@ -38,18 +38,19 @@ class UserScreen extends React.Component {
             }
    		})
    		if (this.props.userTyping.length && this.props.userTyping !== this.props.user) {
-   			var toReturn = (
+   			console.log('%c USERIS TYPINGGGGG', 'color: purple')
+            var toReturn = (
    				<div
    					ref={this.messageContainerReference}
    					className="messagesContainer">
    					{messages}
    				<div className="spaceOrTyping">
-   					<div class="loader">
+                  <div className="loader">
                      <span></span>
                      <span></span>
                      <span></span>
                   </div>
-   				</div>
+               </div>
    				</div>
    			)
    			return toReturn
@@ -97,6 +98,7 @@ class UserScreen extends React.Component {
    				message: this.state.textBoxvalue,
    				time: this.getMoment()
    			})
+            this.props.clearUserTyping()
    			this.setState({textBoxvalue: ''})
    		}
    		
@@ -113,6 +115,13 @@ class UserScreen extends React.Component {
 	    }
 	}
 
+   componentDidMount () {
+      var node = this.messagesContainer;
+       if (node) {
+         node.scrollTop = node.scrollHeight
+       }
+   
+   }
    	renderTextInput () {
    		return (<div className="textInputContainer">
        			<input 
@@ -127,6 +136,7 @@ class UserScreen extends React.Component {
    	}
 
 	render () {
+      console.log('props in render userscfreen: ', this.props)
 		return (
 			<div className="userScreen">
 				{this.renderMessages()}
@@ -144,7 +154,8 @@ UserScreen.proptypes = {
 		updateUser: PropTypes.func,
 		alignUserScreen: PropTypes.string,
 		userTyping: PropTypes.string,
-      chatDate: PropTypes.string
+      chatDate: PropTypes.string,
+      clearUserTyping: PropTypes.func
 };
 
 export default UserScreen
