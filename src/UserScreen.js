@@ -83,28 +83,29 @@ class UserScreen extends React.Component {
    		
    	}
 
-   	handleSubmit (event) {
-   		if (event.key === 'Enter') {
-   			event.preventDefault();
-   			this.props.updateChatLog({
-   				user: this.props.user,
-   				message: this.state.textBoxvalue,
-   				time: this.getMoment()
-   			})
-            this.props.clearUserTyping()
-   			this.setState({textBoxvalue: ''})
-   		}
-   		
-   	}
+   handleSubmit(event) {
+      if (event.key === 'Enter') {
+         event.preventDefault();
+         this.props.updateChatLog({
+            user: this.props.user,
+            message: this.state.textBoxvalue,
+            time: this.getMoment()
+         })
+         this.props.clearUserTyping()
+         this.setState({
+            textBoxvalue: ''
+         })
+      }
+
+   }
 
 
-	componentDidUpdate () {
-	    var node = this.messagesContainer;
-	    if (node) {
-	    	node.scrollTop = node.scrollHeight
-	    }
-	}
-
+   componentDidUpdate() {
+      var node = this.messagesContainer;
+      if (node) {
+         node.scrollTop = node.scrollHeight
+      }
+   }
    componentDidMount () {
       var node = this.messagesContainer;
        if (node) {
@@ -112,18 +113,18 @@ class UserScreen extends React.Component {
        }
    
    }
-   	renderTextInput () {
-   		return (<div className="textInputContainer">
-       			<input 
-       				className="messageInputBox"
-       				type="text"
-       				value={this.state.textBoxvalue}
-       				onChange={this.handleTextSubmit}
-     				onKeyDown={this.handleSubmit}
-       				placeholder="  Type a message..."
-       				/>
-      		</div>)
-   	}
+	renderTextInput () {
+		return (<div className="textInputContainer">
+    			<input 
+    				className="messageInputBox"
+    				type="text"
+    				value={this.state.textBoxvalue}
+    				onChange={this.handleTextSubmit}
+  				onKeyDown={this.handleSubmit}
+    				placeholder="  Type a message..."
+    				/>
+   		</div>)
+	}
 
 	render () {
 		return (

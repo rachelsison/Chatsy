@@ -50,32 +50,11 @@ class App extends React.Component {
   updateChatLog (messageObject) {
     var chatLog = this.state.chatLog
     chatLog.push(messageObject)
-    console.log('updatedChatLog:', chatLog)
-    // this.firebaseRef.push({
-    //   message: messageObject
-    // }).then((snap) => {console.log('snap.key: ', snap.toString())})
     this.firebaseMessages.child(this.state.channelID).push(messageObject)
     this.setState({chatLog: chatLog})
   }
 
   componentWillMount() {
-    // this.firebaseRef = firebase.database().ref('/items')
-    // var message = this.firebaseRef.child('-KcKRPFv54Msr_Ultlmw').push('hello mom')
-    // console.log('firebaseref message object? ', message)
-    // this.firebaseRef.on('value', (dataSnapshot) => {
-    //   const currentMessages = dataSnapshot.val();
-    //   console.log('snapshot key: ', dataSnapshot)
-    //   var chatLog = []
-    //   for (var key in currentMessages) {
-    //     chatLog.push(currentMessages[key].message)
-    //     console.log('keyyy: ', key)
-    //   }
-    //   this.setState({chatLog: chatLog, chatDate: moment().format('MMM Do, h:mm a')})
-    //   console.log('database chatLog: ', chatLog)
-    //   console.log('currentMessages: ', currentMessages)
-    //   console.log('currentmessage one message: ', currentMessages['-KcKRPFv54Msr_Ultlmw'])
-    //   console.log('URL KEY!! ', this.parseKeyFromUrl(document.location.href))
-    // })
     var currentBrowserURL = document.location.href
     if (currentBrowserURL.indexOf('channel=') > -1) {
       var urlKey = this.parseKeyFromUrl(document.location.href)
@@ -96,20 +75,20 @@ class App extends React.Component {
     })
     var messagesList = this.firebaseMessages.child(channelID)
     messagesList.on('value', snap => {
-      console.log('messageslist changed loadArchivedChannel')
-      if (this.state.chatLog.length){
-        var audio = new Audio('chat.mp3')
-        audio.play()
-      }
         const currentMessages = snap.val();
         var chatLog = []
         var chatMembers = {}
+
         for (var key in currentMessages) {
           var  member = currentMessages[key].user
           if (!chatMembers[member]) {
             chatMembers[member] = true
           }
           chatLog.push(currentMessages[key])
+      }
+      if (this.state.chatLog.length && chatLog[chatLog.length - 1].user !== this.state.localUser){
+        var audio = new Audio('chat.mp3')
+        audio.play()
       }
       this.setState({
         chatLog: chatLog,
@@ -121,7 +100,6 @@ class App extends React.Component {
 
     })
     messagesList.on('child_changed', (snap) => {
-      console.log('CHILDCHANGED MESSAGES')
       var audio = new Audio('chat.mp3')
       audio.play()
     })
@@ -142,18 +120,6 @@ class App extends React.Component {
     }
   }
 
-  /* 
-    channelObject = {
-      channelName: 'channel1',
-      userTyping: '',
-      members: []
-    }
-    messages = {
-      channelID: [
-        message: {message: 'hello', user: 'Jane', time: moment().format('LT'), date: moment().format('MMM Do, h:mm a')}
-      ]
-    }
-  */
   createNewChannel (channelObject) {
     var channelID= randomstring.generate(7)
     var toPush = {}
@@ -163,7 +129,6 @@ class App extends React.Component {
     })
     var messagesList = this.firebaseMessages.child(channelID)
     messagesList.on('value', snap => {
-      console.log('messagesList in DB: ', snap.val());
         const currentMessages = snap.val();
         var chatLog = []
         for (var key in currentMessages) {
@@ -181,21 +146,7 @@ class App extends React.Component {
     this.firebaseChannels.on('value', (snapshot) => {
       const allChannels = snapshot.val()
     })
-    // var channelID = this.createNewChannel()
     this.firebaseMessages = firebase.database().ref('/messages')
-    this.firebaseMessages.on('value', (snapshot) => {
-      console.log('in messages, in createDatabases')
-      // var currentMessages = snapshot.val();
-      // var chatLog = []
-      // for (var key in currentMessages) {
-      //   chatLog.push(currentMessages[key].message)
-      // }
-      // this.setState({
-      //   chatLog: chatLog,
-      //   chatDate: moment().format('MMM Do, h:mm a')
-      // })
-    })
-
   }
 
   handleSubmit (event) {
