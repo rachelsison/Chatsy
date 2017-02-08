@@ -21,24 +21,21 @@ class UserScreen extends React.Component {
    	}
 
    	renderMessages () {
-   		var user = this.props.user
-         console.log('props usertyping: ', this.props.userTyping)
-         console.log('user: ', this.props.user)
+   		var localUser = this.props.user
          var lastUser;
    		var messages = this.props.chatLog.map(function(message) {
             if (message) {
-               var showName = (message.user !== lastUser) && (message.user !== user) ? true : false
-               lastUser = message.user
+               var showName = (message.user !== lastUser) && (message.user !== localUser) ? true : false
+               lastUser = message.user !== localUser ? message.user : lastUser
       			return (<Message
-      				localUser={user}
+      				localUser={localUser}
       				user={message.user}
       				message={message.message}
       				time={message.time}
                   showName={showName}/>)
             }
    		})
-   		if (this.props.userTyping.length && this.props.userTyping !== this.props.user) {
-   			console.log('%c USERIS TYPINGGGGG', 'color: purple')
+   		if (this.props.userTyping.length && this.props.userTyping !== localUser) {
             var toReturn = (
    				<div
    					ref={this.messageContainerReference}
@@ -76,14 +73,10 @@ class UserScreen extends React.Component {
    	}
 
    	getMoment () {
-   		console.log('calling getmoment')
-   		console.log('recentmoment: ', this.recentMoment)
    		var momentLocal = moment().format('LT')
    		if (this.recentMoment === momentLocal) {
-   			console.log('in true statement')
    			return ""
    		} else {
-   			console.log('in else statement')
    			this.recentMoment = momentLocal
    			return momentLocal
    		}
@@ -104,9 +97,6 @@ class UserScreen extends React.Component {
    		
    	}
 
-   	handleChange (event) {
-   		console.log('event: ', event)
-   	}
 
 	componentDidUpdate () {
 	    var node = this.messagesContainer;
@@ -136,7 +126,6 @@ class UserScreen extends React.Component {
    	}
 
 	render () {
-      console.log('props in render userscfreen: ', this.props)
 		return (
 			<div className="userScreen">
 				{this.renderMessages()}
