@@ -5,6 +5,7 @@ import './App.css';
 import * as firebase from 'firebase';
 import moment from 'moment'
 import randomstring from 'randomstring';
+import CopyToClipboard from 'react-copy-to-clipboard';
 
 var config = {
   apiKey: "AIzaSyBE88kR1qk1BcZ42m5qpxwEASbJbQ-Unrk",
@@ -88,31 +89,28 @@ class App extends React.Component {
   }
 
   loadArchivedChannel (urlKey) {
-    console.log('in loadArchivedChannel, urlkey: ', urlKey)
     var channelID = urlKey;
     this.firebaseChannels.child(channelID).on('child_changed', (snap) => {
       var updated = snap.val()
-      console.log('channelupdated_______________: ', updated)
       this.setState({userTyping: updated})
     })
     var messagesList = this.firebaseMessages.child(channelID)
-    console.log('messagesList in loadArchivedChannel: ', messagesList)
     messagesList.on('value', snap => {
-      console.log('messagesList in DB: ', snap.val());
+      console.log('messageslist changed loadArchivedChannel')
+      if (this.state.chatLog.length){
+        var audio = new Audio('chat.mp3')
+        audio.play()
+      }
         const currentMessages = snap.val();
         var chatLog = []
         var chatMembers = {}
         for (var key in currentMessages) {
           var  member = currentMessages[key].user
-          console.log('currentMessages[key]: ', member)
           if (!chatMembers[member]) {
             chatMembers[member] = true
           }
           chatLog.push(currentMessages[key])
-          console.log('chatmembers getting ready to push: ', chatMembers)
-          console.log('keyyys in archived channel: ', key)
       }
-      console.log('toupdatechatlog: ', chatLog)
       this.setState({
         chatLog: chatLog,
         chatDate: moment().format('MMM Do, h:mm a'),
@@ -122,10 +120,14 @@ class App extends React.Component {
       })
 
     })
+    messagesList.on('child_changed', (snap) => {
+      console.log('CHILDCHANGED MESSAGES')
+      var audio = new Audio('chat.mp3')
+      audio.play()
+    })
   }
 
   parseKeyFromUrl (url) {
-    console.log('in parseKeyFromUrl function, url: ', url)
     var splitUrl;
     if (url === undefined) {
       return
@@ -154,16 +156,12 @@ class App extends React.Component {
   */
   createNewChannel (channelObject) {
     var channelID= randomstring.generate(7)
-    console.log('channelID: ', channelID)
     var toPush = {}
     toPush[channelID] = {channelName: 'testchannel', userTyping: '', members:[this.state.localUser]}
     this.firebaseChannels.push(toPush)
-    console.log('channelID: ', channelID)
     this.firebaseChannels.child(channelID).on('child_changed', snap => {
-      console.log('channelupdated: ', snap.val())
     })
     var messagesList = this.firebaseMessages.child(channelID)
-    console.log('messagesLIST: ', messagesList)
     messagesList.on('value', snap => {
       console.log('messagesList in DB: ', snap.val());
         const currentMessages = snap.val();
@@ -179,7 +177,6 @@ class App extends React.Component {
   }
 
   createDatabases () {
-    console.log('in createDatabases')
     this.firebaseChannels = firebase.database().ref('/channels')
     this.firebaseChannels.on('value', (snapshot) => {
       const allChannels = snapshot.val()
@@ -187,7 +184,7 @@ class App extends React.Component {
     // var channelID = this.createNewChannel()
     this.firebaseMessages = firebase.database().ref('/messages')
     this.firebaseMessages.on('value', (snapshot) => {
-      console.log(snapshot.val())
+      console.log('in messages, in createDatabases')
       // var currentMessages = snapshot.val();
       // var chatLog = []
       // for (var key in currentMessages) {
@@ -210,11 +207,10 @@ class App extends React.Component {
 
   renderNamePrompt () {
     var setMember = this.setMember
-    console.log('renderingNamePrompt')
     var members = this.state.chatMembers.map(function (member) {
-      console.log('MEMBER: ', member)
       return (<div className="chooseMemberName" onClick={() => setMember(member)}>{member}</div>)
     })
+    var placeholderString = this.state.chatMembers.length ? "Choose your name from above or enter a new name ..." : "Please enter your name.."
     if (!this.state.localUser) {
       return (
         <div className="namePromptContainer">
@@ -224,7 +220,7 @@ class App extends React.Component {
               className="textBoxInput"
               type="text"
               onKeyDown={this.handleSubmit}
-              placeholder="Choose your name from above or enter a new name ..."
+              placeholder={placeholderString}
               />
           </div>
         </div>
@@ -233,13 +229,11 @@ class App extends React.Component {
   }
 
   clearUserTyping () {
-    console.log('in clearn user typing')
     this.firebaseChannels.child(this.state.channelID).update({userTyping: ''})
     this.setState({userTyping: ''})
   }
 
   updateUserTyping (user) {
-    console.log('in updateUserTyping: ')
     this.firebaseChannels.child(this.state.channelID).update({userTyping: user})
     this.setState({userTyping: user})
   }
@@ -251,12 +245,10 @@ class App extends React.Component {
     })
   }
   setMember (member) {
-    console.log('in setmember, member: ', member)
     this.setState({localUser: member})
   }
   renderChannelPrompt () {
     var members = this.state.chatMembers.map(function (member) {
-      console.log('MEMBER: ', member)
       return (<div className="chooseMemberName" onClick={() => this.setMember(member)}>{member}</div>)
     })
     return (
@@ -291,12 +283,18 @@ class App extends React.Component {
   }
 
   render () {
-    console.log('state chatlog in rendermethod: ', this.state.chatLog)
-    console.log('currentMembers: ', this.state.chatMembers)
     return (
       <div className="app-container">
         <div className="app-content">
-        <div className="clearChatLogButton" onClick={this.createNewChannel}>Create New Chat</div>
+          <div className="appHeadContainer">
+            <div className="innerContainer">
+              <div className="clearChatLogButton" onClick={this.createNewChannel}>Create New Chat</div>
+              <CopyToClipboard text={document.location.href}
+                onCopy={() => this.setState({copied: true})}>
+                <span className="clearChatLogButton">Click to Copy Chat Link</span>
+              </CopyToClipboard>
+            </div>
+          </div>
           {this.renderNamePrompt()}
           {this.renderUserScreen()}
         </div>
