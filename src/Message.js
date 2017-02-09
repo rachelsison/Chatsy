@@ -32,9 +32,9 @@ class Message extends React.Component {
 		)	
 
 		} else {
-
+	
 			return (
-				<div title={this.props.time} className="messageText">{emojify(this.props.message.toString())}</div>
+				<div title={this.props.time} className="messageText">{emojify(this.props.message.toString(), {output: 'unicode'})}</div>
 			)
 		}
 	}
