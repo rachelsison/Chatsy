@@ -37,9 +37,11 @@
   box-sizing: border-box;
   position: fixed;
   background-color: white;
-  border: 2px solid lightgrey;
+  border-top: 1px solid lightgrey;
+  border-bottom: 1px solid lightgrey;
   border-radius: 2px;
   padding: 20px;
+  padding-bottom: 35px;
   top: 20%;
   z-index: 100;
   display: inline-block;
@@ -227,7 +229,7 @@
   width: 100%;
   margin-bottom: 20px;
   text-align: center;
-  font-size: 10px;
+  font-size: 14px;
   color: grey;
   font-family: 'Questrial', sans-serif;
 }
