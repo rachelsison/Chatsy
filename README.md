@@ -1,5 +1,5 @@
 ## Chatsy
-##### A Simple React Chat App
+##### A Simple React + Firebase Chat App
 
 Live Link: https://chatsy-cloud.herokuapp.com
 
