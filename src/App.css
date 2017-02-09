@@ -1,4 +1,4 @@
-.App {
+/*.App {
   text-align: center;
 }
 
@@ -22,7 +22,7 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
-
+*/
 /*! CSS reset from benfrain/app-reset */
 @import url('https://fonts.googleapis.com/css?family=Merriweather+Sans|Questrial|Abel|Open+Sans');
 
@@ -39,6 +39,17 @@
   color: grey;
 }
 
+.emojiButtonWrapper {
+  float: left;
+  height: 10px;
+}
+
+.emojiPNG {
+  height: 40px;
+  float: right;
+  margin-left: 8px;
+  cursor: pointer;
+}
 
 .namePromptContainer {
   position: fixed;
@@ -60,6 +71,73 @@
     text-align: center;
 }
 
+.chatButton {
+  cursor: pointer;
+  user-select: none;
+  font-size: 15px;
+  left: 0px;
+  box-sizing: border-box;
+  background-color: white;
+  border: 1px solid #f9f9f9;
+  border-radius: 2px;
+  padding: 6px;
+  text-align: center;
+  float: left;
+  color: grey;
+  margin-right: 10px;
+  font-family: 'Questrial', sans-serif;
+  box-shadow: 0px 0px 4px 0px rgba(168,165,168,1);
+}
+
+
+
+@-webkit-keyframes fadeIt {
+  0%   { background-color: white; }
+  50%  { background-color: #cbffcb; }
+  100% { background-color: white; }
+}
+@-moz-keyframes fadeIt {
+  0%   { background-color: white; }
+  50%  { background-color: #cbffcb; }
+  100% { background-color: white; }
+}
+@-o-keyframes fadeIt {
+  0%   { background-color: white; }
+  50%  { background-color: #cbffcb; }
+  100% { background-color: white; }
+}
+@keyframes fadeIt {
+  0%   { background-color: white; }
+  50%  { background-color: #cbffcb; }
+  100% { background-color: white; }
+}
+
+.linkCopied {    
+    background-image:none !important;
+    -webkit-animation: fadeIt 3s ease-in-out; 
+       -moz-animation: fadeIt 3s ease-in-out; 
+         -o-animation: fadeIt 3s ease-in-out; 
+            animation: fadeIt 3s ease-in-out; 
+}
+
+.linkCopied {
+  user-select: none;
+  font-size: 15px;
+  left: 0px;
+  box-sizing: border-box;
+  border: 1px solid #f9f9f9;
+  border-radius: 2px;
+  padding-top: 6px;
+  padding-bottom: 6px;
+  padding-left: 10px;
+  padding-right: 10px;
+  text-align: center;
+  float: left;
+  color: grey;
+  font-family: 'Questrial', sans-serif;
+  box-shadow: 0px 0px 4px 0px rgba(168,165,168,1);
+}
+
 .clearChatLogButton {
   user-select: none;
   font-size: 15px;
@@ -68,33 +146,49 @@
   background-color: white;
   border: 1px solid #f9f9f9;
   border-radius: 2px;
-  padding: 10px;
+  padding: 6px;
   text-align: center;
   float: left;
   color: grey;
+  margin-right: 10px;
   font-family: 'Questrial', sans-serif;
   box-shadow: 0px 0px 4px 0px rgba(168,165,168,1);
 }
 
+[contenteditable=true]:empty:before {
+  content: attr(placeholder);
+  display: block;
+}
 .appHeadContainer {
   width: 100%;
   position: absolute;
 }
 .messagesContainer {
   left: 0px;
+    right: 0px;
+    margin: auto;
+    height: 72%;
+    /* padding: 2%; */
+    overflow-y: scroll;
+    width: 100%;
+    background-color: #f9f9f9;
+    display: inline-block;
+    bottom: 100px;
+    top: 35px;
+    position: absolute;
+    border-radius: 2px;
+    box-shadow: 0px 0px 4px 0px rgba(168,165,168,1);
+}
+.buttonsContainer {
+  left: 0px;
   right: 0px;
   margin: auto;
-  height: 72%;
-  padding: 14px;
-  overflow-y: scroll; 
-  width: 84%;
-  background-color: #f9f9f9;
+  /*padding: 14px;*/ 
+  width: 100%;
   display: inline-block;
-  bottom: 70px;
-  top: 35px;
+  bottom: 10%;
+
   position: absolute;
-  border-radius: 2px;
-  box-shadow: 0px 0px 4px 0px rgba(168,165,168,1);
 }
 
 .innerContainer {
@@ -108,9 +202,11 @@
 .messageContainer {
   position: relative;
   overflow-wrap: break-word;
+  margin-right: 10px;
+  margin-left: 10px;
 }
 .messageUserName {
-  font-size: 9px;
+  font-size: 15px;
   color: grey;
   font-family: 'Questrial', sans-serif;
 }
@@ -120,17 +216,17 @@
 }
 
 .floatMessageLeft .messageText {
-  background-color: #cbffcb;
-  border-radius: 8px;
-  padding: 4px;
+  background-color: rgba(146, 145, 141, 0.24);
+  border-radius: 10px;
+  padding: 8px;
   margin: 2px;
 }
 
 .floatMessageRight .messageText {
-  background-color: #0EBFE9;
-  border-radius: 8px;
-  padding: 4px;
-  margin: 2px;
+    background-color: #aeefff;
+    border-radius: 10px;
+    padding: 8px;
+    margin: 2px;
 }
 
 .floatMessageRight {
@@ -156,7 +252,7 @@
 
 .messageText {
   font-family: 'Questrial', sans-serif;
-  font-size: 13px;
+  font-size: 17px;
   max-width: 50%;
   display: inline-block;
 }
@@ -176,6 +272,7 @@
   width: 100%;
   height: 40px;
   vertical-align: bottom;
+  margin-left: 20px;
 }
 
 
@@ -183,16 +280,23 @@
 
 .userScreen {
   float: right;
-  height: 100%;
-  width: 100%;
+    height: 100%;
+    width: 70%;
+    position: fixed;
+    bottom: 0px;
+    left: 0px;
+    z-index: -1;
+    left: 0;
+    right: 0;
+    margin: auto;
+}
+.appContent {
   background-color: #ededed;
-  border: 2px solid white;
+  width: 100%;
+  height: 100%;
   position: absolute;
-  bottom: 0px;
-  left: 0px;
   z-index: -1;
 }
-
 /*.userScreen {
   display: inline-block;
   height: 100%;
@@ -220,27 +324,40 @@
 .messageInputBox {
   left: 0px;
   right: 0px;
+  box-sizing: border-box;
   margin: auto;
-  padding-left: 14px;
-  padding-right: 14px;
-  padding-top: 3px;
-  padding-bottom: 3px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 12px;
   overflow-y: scroll;
-  width: 84%;
+  width: 100%;
   background-color: #f9f9f9;
   display: inline-block;
   height: 20px;
   position: absolute;
   bottom: 20px;
   border-radius: 2px;
-  font-size: 12px;
+  font-size: 20px;
   font-family: 'Open Sans', sans-serif;
   box-shadow: 0px 0px 4px 0px rgba(168,165,168,1);
   border: 0px solid white;
 
 }
-
+.memberNames {
+  left: 0px;
+  right: 0px;
+  margin: auto;
+  width: 100%;
+  text-align: center;
+  top: 45px;
+  position: absolute;
+  font-size: 20px;
+  color: grey;
+  font-family: 'Questrial', sans-serif;
+}
 .chooseMemberName {
+  user-select: none;
+  cursor: pointer;
   background-color: #f9f9f9;
   display: inline-block;
   padding: 4px;

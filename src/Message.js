@@ -1,24 +1,41 @@
 import React, { PropTypes } from 'react'
-import ReactDOM from 'react-dom'
-import _ from 'lodash'
+import {emojify} from 'react-emojione';
 
 class Message extends React.Component {
-	constructor(props) {
-		super(props);
-		
-	}
-	
 	floatLeftOrRight () {
 		if (this.props.localUser === this.props.user) {
 			return "floatMessageRight"
+		
 		} else {
+
 			return "floatMessageLeft"
 		}
 	}
 
 	showUserName () {
 		if (this.props.showName) {
-			return this.props.user
+			return this.props.user;
+		}
+	}
+
+	renderEmojiOrMessage () {
+		var parsedString = this.props.message.split('=')
+		if (this.props.message.indexOf('localEmojiGif') > -1) {
+
+			return (
+			<div>
+				<img
+					className='gifEmoji'
+					src={require('../public/'+ parsedString[1] + '.gif')}
+					role="presentation"/>
+			</div>
+		)	
+
+		} else {
+
+			return (
+				<div title={this.props.time} className="messageText">{emojify(this.props.message.toString())}</div>
+			)
 		}
 	}
 
@@ -27,7 +44,7 @@ class Message extends React.Component {
 			<div className="messageContainer">
 				<div className={this.floatLeftOrRight()}>
 					<div className="messageUserName">{this.showUserName()}</div>
-					<div title={this.props.time} className="messageText">{this.props.message}</div>
+					{this.renderEmojiOrMessage()}
 				</div>
 			</div>
 		)
@@ -43,4 +60,4 @@ Message.propTypes = {
 
 };
 
-export default Message
+export default Message;
