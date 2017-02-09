@@ -7,11 +7,11 @@ import moment from 'moment'
 import randomstring from 'randomstring';
 
 var config = {
-  apiKey: process.env.API_KEY,
-  authDomain: process.env.AUTH_DOMAIN,
-  databaseURL: process.env.DATABASE_URL,
-  storageBucket: process.env.STORAGE_BUCKET,
-  messagingSenderId: process.env.MESSAGING_SENDER_ID
+  apiKey: "AIzaSyBE88kR1qk1BcZ42m5qpxwEASbJbQ-Unrk",
+  authDomain: "chatty-40852.firebaseapp.com",
+  databaseURL: "https://chatty-40852.firebaseio.com",
+  storageBucket: "chatty-40852.appspot.com",
+  messagingSenderId: "1059490176611"
 };
 firebase.initializeApp(config);
 
