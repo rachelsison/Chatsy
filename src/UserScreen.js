@@ -208,17 +208,17 @@ class UserScreen extends React.Component {
 }
 
 UserScreen.proptypes = {
-		user: PropTypes.string,
-		chatLog: PropTypes.array,
-		updateChatLog:PropTypes.func,
-		updateUserTyping: PropTypes.func,
-		updateUser: PropTypes.func,
-		alignUserScreen: PropTypes.string,
-		userTyping: PropTypes.string,
-      chatDate: PropTypes.string,
-      clearUserTyping: PropTypes.func,
-      createNewChannel: PropTypes.func,
-      chatMembers: PropTypes.array
+	user: PropTypes.string,
+	chatLog: PropTypes.array,
+	updateChatLog:PropTypes.func,
+	updateUserTyping: PropTypes.func,
+	updateUser: PropTypes.func,
+	alignUserScreen: PropTypes.string,
+	userTyping: PropTypes.string,
+   chatDate: PropTypes.string,
+   clearUserTyping: PropTypes.func,
+   createNewChannel: PropTypes.func,
+   chatMembers: PropTypes.array
 };
 
 export default UserScreen;

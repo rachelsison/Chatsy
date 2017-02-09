@@ -172,6 +172,7 @@ class App extends React.Component {
       return (
         <div className="namePromptContainer">
           <div className="inputContainer">
+          <div className="welcomeMessage">Welcome to Chatsy</div>
           <div>{members}</div>
             <input 
               className="textBoxInput"
