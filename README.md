@@ -15,7 +15,7 @@ To run locally clone repo and run:
  
  
  
- ###### Only works with API Keys (located in App.js) which you can get for free at Firebase.com
+###### Only works with API Keys (located in App.js) which you can get for free at Firebase.com
   
 App features:
 - Unique shareable Chat Channels with no limit on users per channel
