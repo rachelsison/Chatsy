@@ -14,10 +14,10 @@ class UserScreen extends React.Component {
 		this.handleTextSubmit = this.handleTextSubmit.bind(this);
 		this.handleSubmit = this.handleSubmit.bind(this);
 		this.messageContainerReference = this.messageContainerReference.bind(this);
-      this.renderCopyOrCopiedButton = this.renderCopyOrCopiedButton.bind(this);
-      this.renderEmoticonButtons = this.renderEmoticonButtons.bind(this);
-      this.updateChatLogWithEmoticon = this.updateChatLogWithEmoticon.bind(this);
-      this.returnMembersString = this.returnMembersString.bind(this);
+    this.renderCopyOrCopiedButton = this.renderCopyOrCopiedButton.bind(this);
+    this.renderEmoticonButtons = this.renderEmoticonButtons.bind(this);
+    this.updateChatLogWithEmoticon = this.updateChatLogWithEmoticon.bind(this);
+    this.returnMembersString = this.returnMembersString.bind(this);
 		this.recentMoment = ''
 	}
 
